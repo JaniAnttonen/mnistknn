@@ -2,6 +2,7 @@
 
 ## Run
 ```bash
+make data
 make install
 make web
 ```
