@@ -1,5 +1,6 @@
 import numpy as np
 from mnist import MNIST
+from PIL import Image
 
 
 class KNearestNeighbor(object):

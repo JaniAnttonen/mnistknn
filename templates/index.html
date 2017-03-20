@@ -3,8 +3,30 @@
 <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
 <body>
   
-  <div class="container-fluid">
-    EBOUNCE
+  <div class="flex mnist">
+    <div class="predwrap first">
+      <img src="{{ url_for('static', filename='1.png') }}" />
+      <div class="truth">Truth: {{ truths[0]|round|int }}</div>
+      <div class="pred">Prediction: {{ preds[0]|round|int }}</div>
+    </div>
+
+    <div class="predwrap">
+      <img src="{{ url_for('static', filename='2.png') }}" />
+      <div class="truth">Truth: {{ truths[1]|round|int }}</div>
+      <div class="pred">Prediction: {{ preds[1]|round|int }}</div>
+    </div>
+
+    <div class="predwrap">
+      <img src="{{ url_for('static', filename='3.png') }}" />
+      <div class="truth">Truth: {{ truths[2]|round|int }}</div>
+      <div class="pred">Prediction: {{ preds[2]|round|int }}</div>
+    </div>
+
+    <div class="predwrap">
+      <img src="{{ url_for('static', filename='4.png') }}" />
+      <div class="truth">Truth: {{ truths[3]|round|int }}</div>
+      <div class="pred">Prediction: {{ preds[3]|round|int }}</div>
+    </div>
   </div>
 
 </body>
