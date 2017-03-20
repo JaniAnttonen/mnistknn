@@ -34,6 +34,7 @@ class KNearestNeighbor(object):
         num_test = X.shape[0]
         num_train = self.X_train.shape[0]
 
+        # Create a distance matrix that's the same size as the input
         dists = np.zeros((num_test, num_train))
 
         M = np.dot(X, self.X_train.T)
@@ -64,7 +65,6 @@ class KNearestNeighbor(object):
 
             max_count = max(counts)
             closest = counts.index(max_count)
-            print closest
 
             y_pred[i] = closest
 
@@ -83,11 +83,33 @@ def main(argv=None):
     train_images, train_labels = mndata.load_training()
     test_images, test_labels = mndata.load_testing()
 
+    # Create random range of test examples to include
+    exampleindeces = np.random.random_integers(0, high=9999, size=4)
+
+    # Assign test data to numpy arrays
+    images = np.asarray(test_images)
+    labels = np.asarray(test_labels)
+
     # Construct the KNN classifier
     classifier = KNearestNeighbor()
 
+    # Load the classifier with train data
     classifier.train(np.asarray(train_images), np.asarray(train_labels))
-    classifier.predict(np.asarray(test_images))
+
+    # Predict the labels with KNN
+    predictions = classifier.predict(images[exampleindeces], 3)
+    # Save ground truth labels for checking if prediction was correct
+    truths = labels[exampleindeces]
+
+    # Create an array of boolean values of the prediction accuracy
+    checks = [predictions[i] == truths[i] for i in range(predictions.shape[0])]
+
+    # Print the results
+    for check in checks:
+        print check
+
+
+
 
 if __name__ == '__main__':
     main()
