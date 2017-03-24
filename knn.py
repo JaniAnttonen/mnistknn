@@ -53,7 +53,7 @@ class KNearestNeighbor(object):
         (false positives and true negatives)
         """
         # Initialize confusion matrix
-        conf = np.zeros((10, 10), dtype=np.bool)
+        conf = np.zeros((10, 10))
 
         # Predict labels for all data
         dists = self.compute_distances(all_data)
