@@ -47,6 +47,27 @@ class KNearestNeighbor(object):
 
         return dists
 
+    def compute_confusion_matrix(self, all_data, all_labels, k=1):
+        """
+        Computes the confusion matrix of all data and its predictions
+        (false positives and true negatives)
+        """
+        # Initialize confusion matrix
+        conf = np.zeros((10, 10), dtype=np.bool)
+
+        # Predict labels for all data
+        dists = self.compute_distances(all_data)
+        preds = self.predict_labels(dists, k)
+
+        # Compare predictions to ground truth
+        for num in xrange(10):
+            for i in xrange(all_labels):
+                if all_labels[i] != preds[i]:
+                    conf[num, preds[i]] += 1
+
+        return conf
+
+
     def predict_labels(self, dists, k=1):
         """
         Predicts the labels for test data
@@ -101,6 +122,10 @@ def main(argv=None):
     predictions = classifier.predict(images[exampleindeces], 3)
     # Save ground truth labels for checking if prediction was correct
     truths = labels[exampleindeces]
+
+    # Compute the confusion matrix
+    conf = classifier.compute_confusion_matrix(images, labels, 3)
+    print conf
 
     # Create an array of boolean values of the prediction accuracy
     checks = [predictions[i] == truths[i] for i in range(predictions.shape[0])]
