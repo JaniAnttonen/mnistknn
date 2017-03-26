@@ -1,6 +1,6 @@
 import numpy as np
+import pandas as pd
 from mnist import MNIST
-from PIL import Image
 
 
 class KNearestNeighbor(object):
@@ -10,6 +10,7 @@ class KNearestNeighbor(object):
     @author Jani Anttonen
     """
     def __init__(self):
+        print "Constructing the classifier."
         self.X_train = None
         self.y_train = None
 
@@ -18,6 +19,10 @@ class KNearestNeighbor(object):
         Just saves the data to the
         object for referencing later
         """
+        print ("Loading " +
+               str(X.shape[0]) +
+               " training images to memory.")
+
         self.X_train = X
         self.y_train = y
 
@@ -25,13 +30,18 @@ class KNearestNeighbor(object):
         """
         Main method for predicting a class for MNIST data
         """
+        self.printSeparator()
         dists = self.compute_distances(X)
+
         return self.predict_labels(dists, k=k)
 
     def compute_distances(self, X):
         """
         L2 distance (euclidean)
         """
+        print ("Computing distances for " +
+               str(X.shape[0]) +
+               " images against training data.")
         num_test = X.shape[0]
         num_train = self.X_train.shape[0]
 
@@ -52,18 +62,32 @@ class KNearestNeighbor(object):
         Computes the confusion matrix of all data and its predictions
         (false positives and true negatives)
         """
+        self.printSeparator()
+        print ("Computing the confusion matrix for " +
+               str(all_data.shape[0]) +
+               " testing images and " +
+               str(k) +
+               " nearest neighbors.")
         # Initialize confusion matrix
-        conf = np.zeros((10, 10))
+        conf = np.zeros((10, 10), dtype=int)
+        # Initialize count of correct predictions
+        correct = 0
 
         # Predict labels for all data
         dists = self.compute_distances(all_data)
         preds = self.predict_labels(dists, k)
 
         # Compare predictions to ground truth
-        for num in xrange(10):
-            for i in xrange(all_labels):
-                if all_labels[i] != preds[i]:
-                    conf[num, preds[i]] += 1
+        for i in xrange(all_labels.shape[0]):
+            conf[all_labels[i], int(preds[i])] += 1
+            if all_labels[i] == int(preds[i]):
+                correct += 1
+
+        conf = pd.DataFrame(data=conf, index=range(0, 10), columns=range(0, 10))
+        
+        self.printSeparator()
+        print "Predicted " + str(correct) + "/" + str(all_labels.shape[0]) + " correctly."
+        print "Amounting to " + str(float(correct)/float(all_labels.shape[0])*100) + " % prediction accuracy."
 
         return conf
 
@@ -74,6 +98,7 @@ class KNearestNeighbor(object):
         by checking k (default 1) nearest
         neighbors.
         """
+        print "Predicting labels for testing images based on the distances."
         num_test = dists.shape[0]
         y_pred = np.zeros(num_test)
         for i in xrange(num_test):
@@ -92,6 +117,9 @@ class KNearestNeighbor(object):
 
         return y_pred
 
+    def printSeparator(self):
+        print "----------------------------------------------------------------"
+
 
 def main(argv=None):
     """
@@ -106,7 +134,7 @@ def main(argv=None):
     test_images, test_labels = mndata.load_testing()
 
     # Create random range of test examples to include
-    exampleindeces = np.random.random_integers(0, high=9999, size=4)
+    exampleindeces = np.random.random_integers(0, high=9999, size=100)
 
     # Assign test data to numpy arrays
     images = np.asarray(test_images)
@@ -119,20 +147,20 @@ def main(argv=None):
     classifier.train(np.asarray(train_images), np.asarray(train_labels))
 
     # Predict the labels with KNN
-    predictions = classifier.predict(images[exampleindeces], 3)
+    # predictions = classifier.predict(images[exampleindeces], 3)
     # Save ground truth labels for checking if prediction was correct
-    truths = labels[exampleindeces]
+    # truths = labels[exampleindeces]
 
     # Compute the confusion matrix
     conf = classifier.compute_confusion_matrix(images, labels, 3)
     print conf
 
     # Create an array of boolean values of the prediction accuracy
-    checks = [predictions[i] == truths[i] for i in range(predictions.shape[0])]
+    # checks = [predictions[i] == truths[i] for i in range(predictions.shape[0])]
 
     # Print the results
-    for check in checks:
-        print check
+    # for check in checks:
+    #     print check
 
 
 
